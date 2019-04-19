@@ -18,24 +18,34 @@ var l = flag.Bool("l", false, "display items on the list")
 
 func main() {
 	flag.Parse()
+
 	usr, err := user.Current()
 	if err != nil {
 		log.Fatal(err)
 	}
 	filePath = fmt.Sprintf("%s/%s", usr.HomeDir, fileName)
 
-	add(flag.Args())
-	if *l {
-		list()
+	addItem()
+	if *l || len(flag.Args()) <= 0 {
+		listItems()
 	}
 }
 
-func add(items []string) {
+func addItem() {
+	if len(flag.Args()) <= 0 {
+		return
+	}
 
+	item := strings.Join(flag.Args(), " ")
+	items := append(readData(), item)
+	writeData(items)
 }
 
-func list() {
-	fmt.Println("LISTING ITEMS HERE") // TODO: implement list method
+func listItems() {
+	items := readData()
+	for i, item := range items {
+		fmt.Printf("%d. %s\n", i+1, item)
+	}
 }
 
 func readData() []string {
