@@ -23,7 +23,6 @@ func main() {
 		log.Fatal(err)
 	}
 	filePath = fmt.Sprintf("%s/%s", usr.HomeDir, fileName)
-	fmt.Println(filePath)
 
 	add(flag.Args())
 	if *l {
@@ -37,6 +36,29 @@ func add(items []string) {
 
 func list() {
 	fmt.Println("LISTING ITEMS HERE") // TODO: implement list method
+}
+
+func readData() []string {
+	f, err := os.Open(filePath)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "open: %v\n", err)
+		os.Exit(1)
+	}
+	defer f.Close()
+
+	var items []string
+
+	input := bufio.NewScanner(f)
+	for input.Scan() {
+		items = append(items, input.Text())
+	}
+	if err := input.Err(); err != nil {
+		f.Close()
+		fmt.Fprintf(os.Stderr, "read: %v\n", err)
+		os.Exit(1)
+	}
+
+	return items
 }
 
 func writeData(items []string) {
