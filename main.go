@@ -2,6 +2,7 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"log"
@@ -31,29 +32,30 @@ func main() {
 }
 
 func add(items []string) {
-	s := strings.Join(flag.Args(), "\n")
-	if len(s) < 1 {
-		return
-	}
 
-	if !strings.HasSuffix(s, "\n") {
-		s += "\n"
-	}
-
-	f, err := os.Create(filePath)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "open: %v", err)
-		os.Exit(1)
-	}
-	defer f.Close()
-
-	_, err = f.WriteString(s)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "write: %v", err)
-		os.Exit(1)
-	}
 }
 
 func list() {
 	fmt.Println("LISTING ITEMS HERE") // TODO: implement list method
+}
+
+func writeData(items []string) {
+	s := strings.Join(items, "\n")
+
+	f, err := os.Create(filePath)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "open: %v\n", err)
+		os.Exit(1)
+	}
+	defer f.Close()
+
+	w := bufio.NewWriter(f)
+	fmt.Fprint(w, s)
+
+	err = w.Flush()
+	if err != nil {
+		f.Close()
+		fmt.Fprintf(os.Stderr, "write: %v\n", err)
+		os.Exit(1)
+	}
 }
