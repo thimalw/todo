@@ -49,7 +49,7 @@ func listItems() {
 }
 
 func readData() []string {
-	f, err := os.Open(filePath)
+	f, err := os.OpenFile(filePath, os.O_RDONLY|os.O_CREATE, 0666)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "open: %v\n", err)
 		os.Exit(1)
