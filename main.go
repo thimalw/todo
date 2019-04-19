@@ -14,7 +14,8 @@ import (
 const fileName = ".items.tdo"
 
 var filePath string
-var l = flag.Bool("l", false, "display items on the list")
+var l = flag.Bool("l", false, "Display items on the list") // print item list
+var d = flag.Int("d", 0, "Delete item number")             // delete item d
 
 func main() {
 	flag.Parse()
@@ -26,7 +27,10 @@ func main() {
 	filePath = fmt.Sprintf("%s/%s", usr.HomeDir, fileName)
 
 	addItem()
-	if *l || len(flag.Args()) <= 0 {
+	if *d > 0 {
+		deleteItem(*d - 1)
+	}
+	if *l || (*d == 0 && len(flag.Args()) <= 0) {
 		listItems()
 	}
 }
@@ -39,6 +43,20 @@ func addItem() {
 	item := strings.Join(flag.Args(), " ")
 	items := append(readData(), item)
 	writeData(items)
+}
+
+func deleteItem(i int) {
+	items := readData()
+
+	if i >= len(items) {
+		fmt.Println("Item not found.")
+		os.Exit(0)
+	}
+
+	item := items[i]
+	items = append(items[:i], items[i+1:]...)
+	writeData(items)
+	fmt.Printf("Deleted: %s\n", item)
 }
 
 func listItems() {
