@@ -66,6 +66,7 @@ func listItems() {
 	}
 }
 
+// readData returns the item list from the data file as a slice of string.
 func readData() []string {
 	f, err := os.OpenFile(filePath, os.O_RDONLY|os.O_CREATE, 0666)
 	if err != nil {
@@ -89,6 +90,7 @@ func readData() []string {
 	return items
 }
 
+// writeData overwrites the data file with the item list of the items slice.
 func writeData(items []string) {
 	s := strings.Join(items, "\n")
 
