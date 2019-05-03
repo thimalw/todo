@@ -11,11 +11,13 @@ import (
 	"strings"
 )
 
+const _version = "1.0.1"
 const fileName = ".items.tdo"
 
 var filePath string
 var l = flag.Bool("l", false, "Display items on the list") // print item list
 var d = flag.Int("d", 0, "Delete item number")             // delete item d
+var v = flag.Bool("v", false, "Display version")
 
 func main() {
 	flag.Parse()
@@ -26,11 +28,15 @@ func main() {
 	}
 	filePath = fmt.Sprintf("%s/%s", usr.HomeDir, fileName)
 
+	if *v {
+		fmt.Printf("todo v%s\n", _version)
+	}
+
 	addItem()
 	if *d > 0 {
 		deleteItem(*d - 1)
 	}
-	if *l || (*d == 0 && len(flag.Args()) <= 0) {
+	if *l || (*d == 0 && !*v && len(flag.Args()) <= 0) {
 		listItems()
 	}
 }
@@ -48,9 +54,9 @@ func addItem() {
 func deleteItem(i int) {
 	items := readData()
 
-	if i >= len(items) {
+	if i < 0 || i >= len(items) {
 		fmt.Println("Item not found.")
-		os.Exit(0)
+		os.Exit(1)
 	}
 
 	item := items[i]
